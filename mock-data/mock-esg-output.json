@@ -1,0 +1,57 @@
+{
+  "company_name": "Acme Suppliers Ltd",
+  "report_year": "2024",
+  "industry_sector": "Manufacturing",
+  "esg_score": 63,
+  "esg_rating": "A",
+  "approval_status": "CONDITIONAL_APPROVAL",
+  "domain_scores": {
+    "environmental": 62,
+    "social": 71,
+    "governance": 58
+  },
+  "executive_summary": "Acme Suppliers Ltd scores 63/100 (Rating A, Conditional Approval) with above-average social performance offset by an unvalidated net zero claim and significant governance gaps including absent TCFD reporting and no ESG Board committee. Conditional approval is recommended subject to SBTi validation of the net zero commitment and establishment of Board-level ESG oversight within 12 months.",
+  "greenwashing_risk": "MEDIUM",
+  "greenwashing_flags": [
+    "Net zero 2045 target stated without SBTi validation or interim milestones",
+    "Renewable energy percentage unverified by third party"
+  ],
+  "critical_findings": [
+    "Scope 3 emissions not disclosed — GRI 305-3",
+    "TCFD climate scenario analysis absent",
+    "No ESG Board committee or dedicated governance structure",
+    "Gender pay gap analysis not disclosed — GRI 405-2"
+  ],
+  "improvement_priorities": [
+    {
+      "rank": 1,
+      "action": "Submit net zero target to Science Based Targets initiative for validation",
+      "domain": "Environmental",
+      "impact": "HIGH",
+      "timeline": "0-6 months"
+    },
+    {
+      "rank": 2,
+      "action": "Establish Board-level ESG Committee with quarterly reporting mandate",
+      "domain": "Governance",
+      "impact": "HIGH",
+      "timeline": "0-6 months"
+    },
+    {
+      "rank": 3,
+      "action": "Conduct and publish Scope 3 emissions inventory across all 15 GHG Protocol categories",
+      "domain": "Environmental",
+      "impact": "HIGH",
+      "timeline": "6-12 months"
+    }
+  ],
+  "framework_coverage": {
+    "gri": "PARTIAL",
+    "tcfd": "ABSENT",
+    "csrd": "ABSENT",
+    "un_sdgs": "PARTIAL",
+    "sbti": "ABSENT"
+  },
+  "peer_benchmark": "AVERAGE",
+  "next_review_recommended": "12_MONTHS"
+}
