@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ESG Reporting Analyst</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f4f7f4;
+  --surface:#ffffff;
+  --surface2:#edf2ed;
+  --border:#d4ddd4;
+  --border2:#b8c8b8;
+  --text:#1a2a1a;
+  --muted:#6a7d6a;
+  --accent:#2d6a2d;
+  --accent-light:#e8f3e8;
+  --red:#c0392b;
+  --red-bg:#fdf0ee;
+  --amber:#8a6000;
+  --amber-bg:#fef8ec;
+  --green:#1a5c1a;
+  --green-bg:#e8f5e8;
+  --blue:#1a3a6a;
+  --blue-bg:#e8eef8;
+  --gold:#7a5a00;
+  --gold-bg:#fdf6e0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;min-height:100vh}
+.page{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem}
+
+.masthead{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:2px solid var(--accent)}
+.brand-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.brand-icon{width:36px;height:36px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0}
+.brand{font-size:22px;font-weight:600;color:var(--text);letter-spacing:-0.02em}
+.brand span{color:var(--accent)}
+.tagline{font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--muted)}
+.framework-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ftag{font-size:10px;font-weight:500;padding:2px 7px;border-radius:2px;font-family:'IBM Plex Mono',monospace;background:var(--accent-light);color:var(--accent);border:1px solid var(--border)}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1.25rem 1.5rem;margin-bottom:1rem}
+.panel-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-label{font-size:11px;font-weight:500;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:4px;display:block}
+input[type=text],input[type=password],select{width:100%;height:36px;padding:0 10px;font-size:13px;font-family:'IBM Plex Mono',monospace;border:1px solid var(--border2);border-radius:3px;background:var(--surface2);color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+textarea{width:100%;padding:10px;font-size:13px;font-family:'IBM Plex Mono',monospace;border:1px solid var(--border2);border-radius:3px;background:var(--surface2);color:var(--text);resize:vertical;min-height:160px;line-height:1.7}
+textarea:focus{outline:none;border-color:var(--accent)}
+::placeholder{color:var(--muted)}
+
+.run-btn{width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:3px;font-size:14px;font-weight:600;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;letter-spacing:.02em;transition:opacity .15s}
+.run-btn:hover{opacity:.85}
+.run-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin:1rem 0}
+.pipe-step{background:var(--surface);padding:12px 8px;text-align:center}
+.pipe-icon{font-size:18px;display:block;margin-bottom:4px}
+.pipe-name{font-size:11px;font-weight:500;color:var(--text);margin-bottom:3px;line-height:1.3}
+.pipe-status{font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+.pipe-step.running{background:var(--blue-bg)}
+.pipe-step.running .pipe-status{color:var(--blue)}
+.pipe-step.done{background:var(--green-bg)}
+.pipe-step.done .pipe-status{color:var(--green)}
+.pipe-step.err{background:var(--red-bg)}
+.pipe-step.err .pipe-status{color:var(--red)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;width:10px;height:10px;border:1.5px solid #c8d8e8;border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
+
+.err-box{background:var(--red-bg);border:1px solid #f5c6c2;border-radius:3px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:10px;display:none;font-family:'IBM Plex Mono',monospace;line-height:1.6}
+.hint{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-top:5px}
+
+.results{display:none}
+
+/* Score card */
+.score-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:1rem}
+.score-header{display:grid;grid-template-columns:auto 1fr auto;gap:1.5rem;align-items:start;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.score-left .big-score{font-size:64px;font-weight:300;line-height:1;letter-spacing:-2px}
+.score-left .score-sub{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-top:2px}
+.company-name{font-size:20px;font-weight:600;margin-bottom:4px}
+.meta-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.meta-tag{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);background:var(--surface2);padding:2px 7px;border-radius:2px;border:1px solid var(--border)}
+.exec-summary{font-size:13px;line-height:1.75;color:var(--text)}
+.rating-block{text-align:right}
+.rating-badge{font-size:28px;font-weight:600;font-family:'IBM Plex Mono',monospace;display:block;margin-bottom:4px}
+.approval-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:2px;font-family:'IBM Plex Mono',monospace;display:inline-block}
+.APPROVED{background:var(--green-bg);color:var(--green)}
+.CONDITIONAL_APPROVAL{background:var(--amber-bg);color:var(--amber)}
+.REQUIRES_IMPROVEMENT{background:#fef2ec;color:#c05c0a}
+.NOT_APPROVED{background:var(--red-bg);color:var(--red)}
+
+/* Domain bars */
+.domain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.domain-card{background:var(--surface2);border-radius:3px;padding:12px;border:1px solid var(--border)}
+.domain-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
+.domain-score{font-size:28px;font-weight:300;letter-spacing:-1px}
+.domain-bar-track{height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden}
+.domain-bar-fill{height:100%;border-radius:2px;transition:width .8s ease}
+
+/* Framework coverage */
+.framework-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:1rem}
+.fw-item{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:8px;text-align:center}
+.fw-name{font-size:10px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--text);margin-bottom:4px}
+.fw-status{font-size:9px;font-family:'IBM Plex Mono',monospace;padding:2px 5px;border-radius:2px;display:inline-block}
+.FULL{background:var(--green-bg);color:var(--green)}
+.PARTIAL{background:var(--amber-bg);color:var(--amber)}
+.ABSENT{background:var(--red-bg);color:var(--red)}
+.VALIDATED{background:var(--green-bg);color:var(--green)}
+.COMMITTED{background:var(--amber-bg);color:var(--amber)}
+
+/* Greenwashing */
+.gw-box{border-radius:3px;padding:10px 14px;margin-bottom:1rem;border:1px solid}
+.gw-HIGH{background:var(--red-bg);border-color:#f5c6c2}
+.gw-MEDIUM{background:var(--amber-bg);border-color:#f5d6a2}
+.gw-LOW{background:var(--green-bg);border-color:#a8d8a8}
+.gw-title{font-size:11px;font-weight:600;font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
+.gw-HIGH .gw-title{color:var(--red)}
+.gw-MEDIUM .gw-title{color:var(--amber)}
+.gw-LOW .gw-title{color:var(--green)}
+.gw-flag{font-size:12px;color:var(--text);padding:3px 0;display:flex;gap:6px;align-items:flex-start}
+
+/* Findings & priorities */
+.finding-item{background:var(--surface2);border-radius:3px;padding:10px 12px;margin-bottom:6px;border-left:3px solid var(--red);display:flex;gap:8px;font-size:13px;align-items:flex-start}
+.priority-item{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:12px 14px;margin-bottom:6px}
+.pri-header{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.pri-rank{width:20px;height:20px;background:var(--accent);color:white;border-radius:50%;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pri-action{font-size:13px;font-weight:500;color:var(--text)}
+.pri-meta{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);display:flex;gap:10px;margin-top:4px}
+
+.section-head{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin:1.25rem 0 8px;display:flex;align-items:center;gap:8px}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.next-review{background:var(--accent-light);border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--accent);margin-bottom:1rem}
+
+.export-btn{width:100%;padding:11px;background:transparent;border:1px solid var(--border2);border-radius:3px;color:var(--text);font-size:13px;font-family:'IBM Plex Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:1rem;transition:background .15s}
+.export-btn:hover{background:var(--surface2)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <div class="brand-row">
+      <div class="brand-icon">♻</div>
+      <h1 class="brand">ESG <span>Reporting</span> Analyst</h1>
+    </div>
+    <p class="tagline">// 4-agent parallel ESG analysis · environmental · social · governance · scoring</p>
+    <div class="framework-tags">
+      <span class="ftag">GRI Standards</span>
+      <span class="ftag">TCFD</span>
+      <span class="ftag">CSRD</span>
+      <span class="ftag">UN SDGs</span>
+      <span class="ftag">SBTi</span>
+      <span class="ftag">UN Global Compact</span>
+    </div>
+  </div>
+
+  <!-- Config -->
+  <div class="panel">
+    <div class="panel-label">API Configuration</div>
+    <label class="field-label">OpenRouter API Key (Claude)</label>
+    <input type="password" id="or-key" placeholder="YOUR_OPENROUTER_KEY_HERE"/>
+    <p class="hint" style="margin-top:6px">🔒 Key stays in your browser — get key at openrouter.ai/keys</p>
+  </div>
+
+  <!-- Company Info -->
+  <div class="panel">
+    <div class="panel-label">Company Details</div>
+    <div class="grid-2" style="margin-bottom:10px">
+      <div>
+        <label class="field-label">Company Name</label>
+        <input type="text" id="co-name" placeholder="e.g. Acme Suppliers Ltd"/>
+      </div>
+      <div>
+        <label class="field-label">Report Year</label>
+        <input type="text" id="rep-year" placeholder="e.g. 2024"/>
+      </div>
+    </div>
+    <div>
+      <label class="field-label">Industry Sector</label>
+      <select id="sector">
+        <option value="Manufacturing">Manufacturing</option>
+        <option value="Technology">Technology</option>
+        <option value="Financial Services">Financial Services</option>
+        <option value="Retail">Retail</option>
+        <option value="Energy">Energy</option>
+        <option value="Healthcare">Healthcare</option>
+        <option value="Construction">Construction</option>
+        <option value="Agriculture">Agriculture</option>
+        <option value="Logistics & Transport">Logistics & Transport</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Document -->
+  <div class="panel">
+    <div class="panel-label">ESG Document Text</div>
+    <textarea id="doc-text" placeholder="Paste the supplier's ESG questionnaire, sustainability report, or annual report text here...&#10;&#10;Supports: sustainability reports, ESG questionnaires, annual reports, CSR reports."></textarea>
+    <div style="display:flex;justify-content:space-between;margin-top:6px">
+      <span class="hint">Min ~100 words · More detail = more accurate scoring</span>
+      <button onclick="loadDemo()" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;text-decoration:underline">Load demo report →</button>
+    </div>
+  </div>
+
+  <div class="err-box" id="err-box"></div>
+
+  <button class="run-btn" id="run-btn" onclick="runAnalysis()">
+    ▶ &nbsp; Run ESG Analysis
+  </button>
+
+  <div class="pipeline">
+    <div class="pipe-step" id="ps1"><span class="pipe-icon">🌱</span><div class="pipe-name">Environmental</div><div class="pipe-status" id="pss1">idle</div></div>
+    <div class="pipe-step" id="ps2"><span class="pipe-icon">👥</span><div class="pipe-name">Social</div><div class="pipe-status" id="pss2">idle</div></div>
+    <div class="pipe-step" id="ps3"><span class="pipe-icon">🏛</span><div class="pipe-name">Governance</div><div class="pipe-status" id="pss3">idle</div></div>
+    <div class="pipe-step" id="ps4"><span class="pipe-icon">📊</span><div class="pipe-name">ESG Scorer</div><div class="pipe-status" id="pss4">idle</div></div>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+
+    <div class="score-card">
+      <div class="score-header">
+        <div class="score-left">
+          <div class="big-score" id="r-score">—</div>
+          <div class="score-sub">esg score</div>
+        </div>
+        <div>
+          <div class="company-name" id="r-company">—</div>
+          <div class="meta-tags">
+            <span class="meta-tag" id="r-sector"></span>
+            <span class="meta-tag" id="r-year"></span>
+          </div>
+          <div class="exec-summary" id="r-summary"></div>
+        </div>
+        <div class="rating-block">
+          <span class="rating-badge" id="r-rating">—</span>
+          <span class="approval-tag" id="r-approval"></span>
+        </div>
+      </div>
+
+      <div class="section-head">Domain scores</div>
+      <div class="domain-grid">
+        <div class="domain-card">
+          <div class="domain-label">🌱 Environmental</div>
+          <div class="domain-score" id="ds-e" style="color:var(--green)">—</div>
+          <div class="domain-bar-track"><div class="domain-bar-fill" id="db-e" style="background:var(--green);width:0%"></div></div>
+        </div>
+        <div class="domain-card">
+          <div class="domain-label">👥 Social</div>
+          <div class="domain-score" id="ds-s" style="color:var(--blue)">—</div>
+          <div class="domain-bar-track"><div class="domain-bar-fill" id="db-s" style="background:var(--blue);width:0%"></div></div>
+        </div>
+        <div class="domain-card">
+          <div class="domain-label">🏛 Governance</div>
+          <div class="domain-score" id="ds-g" style="color:var(--amber)">—</div>
+          <div class="domain-bar-track"><div class="domain-bar-fill" id="db-g" style="background:#8a6000;width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="section-head">Framework coverage</div>
+      <div class="framework-grid" id="fw-grid"></div>
+
+      <div class="section-head">Greenwashing risk assessment</div>
+      <div id="gw-section"></div>
+
+      <div class="section-head">Critical findings</div>
+      <div id="findings-list"></div>
+
+      <div class="section-head">Top improvement priorities</div>
+      <div id="priorities-list"></div>
+
+      <div class="next-review" id="next-review"></div>
+
+      <button class="export-btn" onclick="exportReport()">⬇ &nbsp; Export ESG Scorecard (JSON)</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const OR_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const MODEL = 'anthropic/claude-haiku-4-5';
+let lastResult = null;
+
+function loadDemo() {
+  document.getElementById('co-name').value = 'Acme Suppliers Ltd';
+  document.getElementById('rep-year').value = '2024';
+  document.getElementById('doc-text').value = `ACME SUPPLIERS LTD — SUSTAINABILITY REPORT 2024
+
+ENVIRONMENTAL PERFORMANCE
+We are committed to reducing our carbon footprint. In 2024 our Scope 1 emissions were 12,400 tCO2e and Scope 2 emissions were 8,200 tCO2e. We have not yet completed a Scope 3 emissions inventory. We have set a target to reach net zero by 2045 but have not yet had this validated by the Science Based Targets initiative. Our renewable energy consumption reached 38% of total energy use in 2024, up from 29% in 2023. We are working towards 100% renewable energy by 2035. Water consumption decreased by 8% year on year. We sent 12% of waste to landfill in 2024, down from 18% in 2023. We have no formal biodiversity policy in place.
+
+SOCIAL PERFORMANCE
+Our workforce of 4,200 employees operates across 12 countries. Our total recordable injury rate was 1.2 per 200,000 hours worked. We are proud to report zero fatalities in 2024. We have a Modern Slavery Statement published on our website and conduct annual supplier audits covering 60% of Tier 1 suppliers. Our Code of Conduct prohibits child labour and forced labour. We pay market-competitive wages but have not formally adopted a living wage commitment. Gender representation at senior management level is 31% women. We have not disclosed a gender pay gap analysis. We invested $2.1M in community programmes in 2024.
+
+GOVERNANCE
+Our Board comprises 9 directors of whom 3 are women (33%). We have an Audit Committee and a Risk Committee but no dedicated ESG Committee at Board level. ESG performance is reviewed by the Risk Committee annually. Our CEO compensation includes a 10% weighting on ESG KPIs from 2024. We have an anti-bribery policy certified to ISO 37001. A confidential whistleblower hotline is operated by a third party. This report has been prepared with reference to GRI Standards but has not been externally assured. We have not published a GRI content index. We do not currently report against TCFD or CSRD frameworks.`;
+}
+
+const AGENTS = {
+  env: `You are a Senior Environmental Risk Analyst and GRI Standards auditor. Analyse the company document for environmental performance. Score 0-100 where HIGHER=BETTER. Domains: Carbon Emissions (Scope 1/2/3), Climate Risk/TCFD, Energy Management, Water/Waste, Biodiversity, Net Zero/SBTi. Flag greenwashing: targets without baselines, vague commitments, unverified claims, selective disclosure. If domain not mentioned score it 15. Respond ONLY with raw JSON, no markdown, start with {:
+{"domain":"environmental","agent_version":"1.0","company_name":"string","domain_score":0,"carbon_emissions_disclosed":false,"scope_3_disclosed":false,"net_zero_target":"null","sbti_validated":false,"renewable_energy_percentage":"string","greenwashing_flags":["string"],"findings":[{"severity":"HIGH","framework":"GRI 305","finding_title":"string","evidence":"string","remediation":"string"}],"positive_indicators":["string"],"analyst_note":"string"}`,
+
+  social: `You are a Senior Social Compliance and Labour Rights Auditor certified in SA8000 and GRI Social Standards. Analyse the company document for social performance. Score 0-100 where HIGHER=BETTER. Domains: Labour Practices, Health & Safety, Human Rights/Modern Slavery, DEI metrics, Community Impact, Supply Chain Social Standards. Missing Modern Slavery Statement = HIGH finding. No gender pay gap data = MEDIUM finding. Respond ONLY with raw JSON, no markdown, start with {:
+{"domain":"social","agent_version":"1.0","company_name":"string","domain_score":0,"living_wage_commitment":false,"human_rights_policy":false,"modern_slavery_statement":false,"dei_metrics_disclosed":false,"fatality_rate_disclosed":false,"supplier_audit_programme":false,"findings":[{"severity":"HIGH","framework":"GRI 401","finding_title":"string","evidence":"string","remediation":"string"}],"positive_indicators":["string"],"analyst_note":"string"}`,
+
+  gov: `You are a Senior Corporate Governance and Business Ethics Auditor expert in GRI Governance Standards and UN Global Compact. Analyse the company document for governance quality. Score 0-100 where HIGHER=BETTER. Domains: Board Composition/Diversity, ESG Board Oversight, Anti-Corruption/Ethics, Transparency/Reporting Quality, Executive ESG Pay Linkage, Tax Transparency. Missing whistleblower mechanism = HIGH. No third-party assurance = MEDIUM. ESG-linked pay = strong positive. Respond ONLY with raw JSON, no markdown, start with {:
+{"domain":"governance","agent_version":"1.0","company_name":"string","domain_score":0,"board_diversity_disclosed":false,"esg_board_committee":false,"anti_corruption_policy":false,"whistleblower_mechanism":false,"third_party_assurance":false,"esg_linked_executive_pay":false,"gri_index_published":false,"findings":[{"severity":"HIGH","framework":"GRI 405","finding_title":"string","evidence":"string","remediation":"string"}],"positive_indicators":["string"],"analyst_note":"string"}`,
+
+  orch: (j1,j2,j3,co,sector) => `You are the Chief ESG Intelligence Orchestrator. Synthesise 3 ESG agent outputs into a final ESG scorecard. Formula: ESG Score = (Environmental×0.35)+(Social×0.30)+(Governance×0.35). Ratings: 85-100=AAA, 70-84=AA, 55-69=A, 45-54=BBB, 35-44=BB, 20-34=B, 0-19=CCC. Approval: AAA/AA=APPROVED, A/BBB=CONDITIONAL_APPROVAL, BB/B=REQUIRES_IMPROVEMENT, CCC=NOT_APPROVED. Greenwashing: 3+ flags=HIGH, 1-2=MEDIUM, 0=LOW. Executive summary exactly 2 sentences. Company: ${co}. Sector: ${sector}. Respond ONLY with raw JSON, no markdown, start with {:
+{"company_name":"string","report_year":"string","industry_sector":"string","esg_score":0,"esg_rating":"BBB","approval_status":"CONDITIONAL_APPROVAL","domain_scores":{"environmental":0,"social":0,"governance":0},"score_weights":{"environmental":0.35,"social":0.30,"governance":0.35},"executive_summary":"string","greenwashing_risk":"MEDIUM","greenwashing_flags":["string"],"critical_findings":["string"],"improvement_priorities":[{"rank":1,"action":"string","domain":"Environmental","impact":"HIGH","timeline":"0-6 months"}],"framework_coverage":{"gri":"PARTIAL","tcfd":"ABSENT","csrd":"ABSENT","un_sdgs":"PARTIAL","sbti":"ABSENT"},"peer_benchmark":"AVERAGE","next_review_recommended":"12_MONTHS"}
+
+ENVIRONMENTAL AGENT: ${JSON.stringify(j1)}
+SOCIAL AGENT: ${JSON.stringify(j2)}
+GOVERNANCE AGENT: ${JSON.stringify(j3)}`
+};
+
+function setStep(n, cls, label) {
+  document.getElementById('ps'+n).className = 'pipe-step ' + cls;
+  document.getElementById('pss'+n).innerHTML = cls==='running' ? '<span class="spin"></span> '+label : label;
+}
+function showErr(msg) { const b=document.getElementById('err-box'); b.textContent='⚠ '+msg; b.style.display='block'; }
+function hideErr() { document.getElementById('err-box').style.display='none'; }
+
+async function callClaude(system, user, key) {
+  const res = await fetch(OR_URL, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key,'HTTP-Referer':'https://esg-reporting-analyst.local','X-Title':'ESG Reporting Analyst'},
+    body: JSON.stringify({model:MODEL,max_tokens:2000,messages:[{role:'system',content:system},{role:'user',content:user}]})
+  });
+  if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
+  const data = await res.json();
+  return (data.choices?.[0]?.message?.content||'').replace(/```json|```/g,'').trim();
+}
+
+function parseJ(str) {
+  try { return JSON.parse(str); }
+  catch { const m=str.match(/\{[\s\S]*\}/); if(m){try{return JSON.parse(m[0]);}catch{}} throw new Error('Agent returned invalid JSON — click Run Again'); }
+}
+
+const delay = ms => new Promise(r => setTimeout(r, ms));
+
+async function runAnalysis() {
+  hideErr();
+  const key = document.getElementById('or-key').value.trim();
+  const txt = document.getElementById('doc-text').value.trim();
+  const coName = document.getElementById('co-name').value.trim() || 'Company';
+  const repYear = document.getElementById('rep-year').value.trim() || '2024';
+  const sector = document.getElementById('sector').value;
+
+  if (!key || key==='YOUR_OPENROUTER_KEY_HERE') { showErr('Please paste your OpenRouter API key above.'); return; }
+  if (txt.length < 100) { showErr('Please paste more document text. Try the demo report button.'); return; }
+
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳  Analysing ESG report — please wait ~75 seconds...';
+  document.getElementById('results').style.display = 'none';
+  [1,2,3,4].forEach(n => setStep(n,'','idle'));
+
+  const userMsg = `COMPANY: ${coName}\nSECTOR: ${sector}\nREPORT YEAR: ${repYear}\n\nDOCUMENT:\n${txt}`;
+
+  try {
+    setStep(1,'running','analysing...');
+    const r1 = await callClaude(AGENTS.env, userMsg, key);
+    const j1 = parseJ(r1);
+    setStep(1,'done','score: '+j1.domain_score);
+
+    await delay(15000);
+
+    setStep(2,'running','analysing...');
+    const r2 = await callClaude(AGENTS.social, userMsg, key);
+    const j2 = parseJ(r2);
+    setStep(2,'done','score: '+j2.domain_score);
+
+    await delay(15000);
+
+    setStep(3,'running','analysing...');
+    const r3 = await callClaude(AGENTS.gov, userMsg, key);
+    const j3 = parseJ(r3);
+    setStep(3,'done','score: '+j3.domain_score);
+
+    await delay(15000);
+
+    setStep(4,'running','scoring...');
+    const r4 = await callClaude(AGENTS.orch(j1,j2,j3,coName,sector), 'Synthesise into final ESG scorecard.', key);
+    const j4 = parseJ(r4);
+    setStep(4,'done','complete ✓');
+
+    lastResult = {agents:{environmental:j1,social:j2,governance:j3},scorecard:j4};
+    renderResults(j4, repYear, sector);
+
+  } catch(e) {
+    showErr(e.message||'Unknown error');
+    [1,2,3,4].forEach(n=>{if(document.getElementById('ps'+n).className.includes('running'))setStep(n,'err','error');});
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶  Run Again';
+  }
+}
+
+function scoreColor(s) {
+  if(s>=70) return 'var(--green)';
+  if(s>=50) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+function renderResults(d, year, sector) {
+  const score = Math.round(d.esg_score||0);
+  document.getElementById('r-score').textContent = score;
+  document.getElementById('r-score').style.color = scoreColor(score);
+  document.getElementById('r-company').textContent = d.company_name||'—';
+  document.getElementById('r-sector').textContent = d.industry_sector||sector;
+  document.getElementById('r-year').textContent = d.report_year||year;
+  document.getElementById('r-summary').textContent = d.executive_summary||'';
+  document.getElementById('r-rating').textContent = d.esg_rating||'—';
+  document.getElementById('r-rating').style.color = scoreColor(score);
+
+  const at = document.getElementById('r-approval');
+  at.textContent = (d.approval_status||'').replace(/_/g,' ');
+  at.className = 'approval-tag ' + (d.approval_status||'CONDITIONAL_APPROVAL');
+
+  const ds = d.domain_scores||{};
+  [['e','environmental'],['s','social'],['g','governance']].forEach(([k,dk])=>{
+    const v = Math.round(ds[dk]||0);
+    document.getElementById('ds-'+k).textContent = v;
+    document.getElementById('ds-'+k).style.color = scoreColor(v);
+    document.getElementById('db-'+k).style.width = v+'%';
+  });
+
+  const fw = d.framework_coverage||{};
+  const fwNames = {gri:'GRI',tcfd:'TCFD',csrd:'CSRD',un_sdgs:'UN SDGs',sbti:'SBTi'};
+  document.getElementById('fw-grid').innerHTML = Object.entries(fwNames).map(([k,label])=>`
+    <div class="fw-item">
+      <div class="fw-name">${label}</div>
+      <span class="fw-status ${fw[k]||'ABSENT'}">${fw[k]||'ABSENT'}</span>
+    </div>`).join('');
+
+  const gwr = d.greenwashing_risk||'LOW';
+  const gwFlags = d.greenwashing_flags||[];
+  document.getElementById('gw-section').innerHTML = `
+    <div class="gw-box gw-${gwr}">
+      <div class="gw-title">⚠ GREENWASHING RISK: ${gwr}</div>
+      ${gwFlags.length ? gwFlags.map(f=>`<div class="gw-flag">▸ ${f}</div>`).join('') : '<div class="gw-flag">✓ No greenwashing indicators identified</div>'}
+    </div>`;
+
+  const fl = document.getElementById('findings-list');
+  const findings = d.critical_findings||[];
+  fl.innerHTML = findings.length
+    ? findings.slice(0,5).map(f=>`<div class="finding-item"><span style="color:var(--red);flex-shrink:0">▲</span>${f}</div>`).join('')
+    : '<div class="finding-item" style="border-left-color:var(--green)"><span style="color:var(--green)">✓</span> No critical findings identified</div>';
+
+  const pl = document.getElementById('priorities-list');
+  pl.innerHTML = (d.improvement_priorities||[]).map(p=>`
+    <div class="priority-item">
+      <div class="pri-header">
+        <div class="pri-rank">${p.rank}</div>
+        <div class="pri-action">${p.action}</div>
+      </div>
+      <div class="pri-meta">
+        <span>${p.domain}</span>
+        <span>Impact: ${p.impact}</span>
+        <span>Timeline: ${p.timeline}</span>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('next-review').textContent =
+    '📅 Next ESG review recommended: ' + (d.next_review_recommended||'12_MONTHS').replace(/_/g,' ').toLowerCase() +
+    ' · Peer benchmark: ' + (d.peer_benchmark||'AVERAGE').replace(/_/g,' ');
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function exportReport() {
+  if (!lastResult) return;
+  const blob = new Blob([JSON.stringify(lastResult,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `esg-scorecard-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
